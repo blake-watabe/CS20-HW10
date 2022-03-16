@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>API</title>
+</head>
+    <script>
+		function getWeather() {
+			request = new XMLHttpRequest()
+            if (request == null) {
+                alert("Unable to create HTTPRequest object");
+                return;
+            }
+ 
+            request.open("GET", "https://api.weather.gov/gridpoints/BOX/70,76/forecast", true);
+
+			request.onreadystatechange = function() {
+ 
+				if (request.readyState == 4 && request.status == 200) {
+
+					result = request.responseText;
+					weather = JSON.parse(result);
+					
+					document.getElementById("data").innerHTML ="Current temperature in boston: " + weather["properties"]["periods"][0]["temperature"] + "˚F";
+					
+				}
+				else if (request.readyState == 4 && request.status != 200) {
+
+					document.getElementById("data").innerHTML = "Something is wrong!  Check the logs to see where this went off the rails";
+
+				}
+
+				else if (request.readyState == 3) {
+
+					document.getElementById("data").innerHTML = "Too soon!  Try again";
+
+				}
+
+			}
+			request.send();
+		}
+	</script>
+
+    <script language"="javascript">
+        res = fetch("https://api.weather.gov/gridpoints/BOX/70,76/forecast")
+            .then (res => res.text())
+            .then (data => {
+                        data = JSON.parse(data)
+                        data = data.properties.periods[0].temperature
+                        alert("Tonight's temerature is " + data + " degrees")
+                    })
+            .catch (error => {
+                console.log("error")
+            })
+    </script>
+</head>
+
+
+<body onload="getWeather()">
+
+	<h1>Weather</h1>
+	<div id="data">Loading...</div>
+
+    <div>The API I selected is another weather API. I was able to find a free
+        one that is able to provide weekly forecasts based on location. It was
+        found via https://openweathermap.org/current. The options I used were
+        based on Boston's latitude and longitude, and I then pulled the current
+        temperature from the array that stores each day's weather. This API would
+        be useful in an application for determining good days to hike, or perhaps
+        to calculate average daily temperature.
+    </div>
+
+</body>
+</html>
